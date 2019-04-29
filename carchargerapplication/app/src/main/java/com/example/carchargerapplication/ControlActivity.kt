@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import kotlinx.android.synthetic.main.control_layout.*
+import java.io.BufferedReader
 import java.io.IOException
 import java.lang.Exception
 import java.util.*
@@ -33,11 +34,15 @@ class ControlActivity: AppCompatActivity() {
         //call inner class
         ConnectToDevice(this).execute()
 
+        //setup buttons
         sendButton.setOnClickListener{
             sendCommand("a")
         }
         disconnectButton.setOnClickListener {
             disconnect()
+        }
+        getDataButton.setOnClickListener{
+            getData()
         }
     }
 
@@ -46,6 +51,18 @@ class ControlActivity: AppCompatActivity() {
             try {
                 m_bluetoothSocket!!.outputStream.write(input.toByteArray())
             } catch (e: IOException){
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun getData(){
+        var data: BufferedReader
+        if(m_bluetoothSocket != null){
+            try{
+                data = m_bluetoothSocket!!.inputStream.bufferedReader(Charsets.US_ASCII)
+                Log.i("data",data.readLine())
+            }catch (e: IOException){
                 e.printStackTrace()
             }
         }
